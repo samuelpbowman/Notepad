@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Notepad</string>
+    <string name="new_file">New</string>
+    <string name="openFile">Open</string>
+    <string name="saveFile">Save</string>
+    <string name="title_activity_list">ListActivity</string>
+</resources>
