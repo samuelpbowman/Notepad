@@ -1,13 +1,12 @@
 package com.samuel.notepad;
 
 import android.content.Intent;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -17,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         TextView text = (TextView) findViewById(R.id.editText);
+        text.setText(((NotepadApplication)getApplication()).getText());
 
         Button newFile = (Button) findViewById(R.id.newBut);
         Button openFile = (Button) findViewById(R.id.openBut);
@@ -25,7 +25,10 @@ public class MainActivity extends AppCompatActivity {
         newFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //create new file
+                ((NotepadApplication)getApplication()).setText("");
+                ((TextView)findViewById(R.id.editText)).setText("".toCharArray(), 0, 0);
+                Snackbar.make(view, "All Set!", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
             }
         });
         openFile.setOnClickListener(new View.OnClickListener() {
@@ -38,7 +41,10 @@ public class MainActivity extends AppCompatActivity {
         saveFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //write current file
+                ((NotepadApplication)getApplication())
+                        .setText(String.valueOf(((TextView)findViewById(R.id.editText)).getText()));
+                Snackbar.make(view, "Saved", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
             }
         });
     }
