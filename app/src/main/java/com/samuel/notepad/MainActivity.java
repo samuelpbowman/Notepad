@@ -26,17 +26,7 @@ public class MainActivity extends AppCompatActivity
 
         newFile.setOnClickListener(new View.OnClickListener() {
             @Override
-            public synchronized void onClick(View view) {
-                /*new Thread(new Runnable() {
-                    public synchronized void run() {
-                        if (((NotepadApplication) getApplication()).getText() != "")
-                            showSaveDialog();
-
-                    }
-                });
-                try {
-                    this.wait();
-                } catch(Exception e) {}*/
+            public void onClick(View view) {
                 ((NotepadApplication)getApplication()).setText("");
                 ((TextView)findViewById(R.id.editText)).setText("".toCharArray(), 0, 0);
                 Snackbar.make(view, "All Set!", Snackbar.LENGTH_LONG)
@@ -45,16 +35,7 @@ public class MainActivity extends AppCompatActivity
         });
         openFile.setOnClickListener(new View.OnClickListener() {
             @Override
-            public synchronized void onClick(View view) {
-                /*new Thread(new Runnable() {
-                    public synchronized void run() {
-                        if(((NotepadApplication)getApplication()).getText() != "") showSaveDialog();
-                    }});
-                try {
-                    this.wait();
-                } catch(Exception e) {}
-                if(((NotepadApplication)getApplication()).getText() != "")
-                    showSaveDialog();*/
+            public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, ListActivity.class);
                 startActivity(intent);
             }
@@ -76,12 +57,13 @@ public class MainActivity extends AppCompatActivity
 
 
     @Override
-    public synchronized void onSaveDialogYesClick(DialogFragment dialog) {
+    public void onSaveDialogYesClick(DialogFragment dialog) {
         ((NotepadApplication)getApplication()).saveCurrent();
+
     }
 
     @Override
-    public synchronized void onSaveDialogNoClick(DialogFragment dialog) {
-        dialog.dismiss();
+    public void onSaveDialogNoClick(DialogFragment dialog) {
+
     }
 }

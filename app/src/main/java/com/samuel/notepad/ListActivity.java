@@ -28,7 +28,7 @@ public class ListActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         ((NotepadApplication)getApplication()).setCurrentFileName("");
-        List<String> l = new ArrayList<>(((NotepadApplication)getApplication()).getSize());
+        List<String> l = new ArrayList<>(((NotepadApplication)getApplication()).getFiles().size());
         for(File f: ((NotepadApplication)getApplication()).getFiles()) {
             l.add(f.getPath());
         }
@@ -53,6 +53,7 @@ public class ListActivity extends AppCompatActivity
     public void onItemClick(AdapterView<?> adapt, View v, int position, long id) {
         Intent intent = new Intent(this, MainActivity.class);
         File file = ((NotepadApplication)getApplication()).getFiles().get(position);
+
         try {
             BufferedReader b = new BufferedReader(new FileReader(file));
             StringBuilder s = new StringBuilder();
@@ -72,6 +73,7 @@ public class ListActivity extends AppCompatActivity
 
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+        ((NotepadApplication)getApplication()).getFiles().remove(i);
         return ((NotepadApplication)getApplication()).getFiles().get(i).delete();
 
     }
