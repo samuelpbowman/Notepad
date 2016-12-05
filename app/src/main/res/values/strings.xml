@@ -7,6 +7,6 @@
     <string name="dialog_yes_button">Yes</string>
     <string name="dialog_no_button">No</string>
     <string name="dialog_okay_button">OK</string>
-    <string name="dialog_cancel_button">Cancel</string>
     <string name="dialog_save_message">Would you like to save your file?</string>
+    <string name="dialog_name_message">Enter a name for your file:</string>
 </resources>
