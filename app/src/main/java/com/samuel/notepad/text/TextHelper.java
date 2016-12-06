@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public class TextHelper {
 
-    public static String readTextFromFile(TextFile file)
+    public static String readTextFromFile(File file)
             throws IOException {
         StringBuilder text = new StringBuilder();
         FileReader read = new FileReader(file);
@@ -29,7 +29,7 @@ public class TextHelper {
     }
 
 
-    public static void writeTextToFile(String text, TextFile file)
+    public static void writeTextToFile(String text, File file)
             throws IOException {
         FileWriter write = new FileWriter(file);
         BufferedWriter buf = new BufferedWriter(write);
@@ -41,9 +41,9 @@ public class TextHelper {
         write.close();
     }
 
-    private static File getTextFileOfSameName(TextFile file, File[] files) {
+    private static File getTextFileOfSameName(File file, File[] files) {
         for(File f:files) {
-            if(!(f instanceof TextFile)) continue;
+            if(!(f instanceof File)) continue;
             if(f.getName().equals(file.getName())) {
                 return f;
             }

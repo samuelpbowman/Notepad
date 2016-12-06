@@ -2,7 +2,7 @@ package com.samuel.notepad;
 
 import android.app.Application;
 
-import com.samuel.notepad.text.TextFile;
+import java.io.File;
 
 /**
  * Application class for the Notepad project I am working
@@ -14,16 +14,19 @@ import com.samuel.notepad.text.TextFile;
 
 public class NotepadApplication extends Application {
 
-    private TextFile file;
+    private File file;
 
     @Override
     public void onCreate() {
-
+        this.file = new File("", "");
     }
 
-    public TextFile getFile() { return file; }
+    public File getFile() {
+        return file;
+    }
 
-    public void setFile(TextFile file) {
+    public void setFile(File file) {
         this.file = file;
     }
+
 }
