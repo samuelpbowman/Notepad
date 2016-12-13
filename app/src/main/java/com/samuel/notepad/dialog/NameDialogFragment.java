@@ -18,7 +18,7 @@ import com.samuel.notepad.R;
 public class NameDialogFragment extends DialogFragment {
 
     public interface NameDialogListener {
-        public void onNamePositiveButtonClick(DialogFragment dialog);
+        void onNamePositiveButtonClick(DialogFragment dialog);
     }
 
     NameDialogListener ndl;
@@ -27,7 +27,8 @@ public class NameDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(R.layout.dialog_name);
         builder.setMessage(R.string.dialog_name_message);
-        builder.setPositiveButton(R.string.dialog_okay_button, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(
+                R.string.dialog_okay_button, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 ndl.onNamePositiveButtonClick(NameDialogFragment.this);

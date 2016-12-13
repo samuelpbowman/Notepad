@@ -2,8 +2,6 @@ package com.samuel.notepad;
 
 import android.app.DialogFragment;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +15,7 @@ import android.widget.ListView;
 import com.samuel.notepad.dialog.NameDialogFragment;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class ListActivity extends AppCompatActivity
@@ -32,21 +31,14 @@ public class ListActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         ListView lv = (ListView) findViewById(R.id.documents);
-        ArrayList<File> files = new ArrayList<>();
-        PackageManager m = getPackageManager();
-        String s = getPackageName();
-        try {
-            PackageInfo p = m.getPackageInfo(s, 0);
-            s = p.applicationInfo.dataDir+"/files";
-        } catch(PackageManager.NameNotFoundException n) {
-            n.printStackTrace();
+        ArrayList<String> files = new ArrayList<>();
+        for(File f : getApplicationContext().getFilesDir().listFiles()) {
+            if(f.getName().equals("instant-run")) continue;
+            files.add(f.getAbsolutePath());
         }
 
-        for(File f:new File(s).listFiles()) {
-            if(f.getName().equals("instant-run")) continue;
-            files.add(f);
-        }
-        adapt = new ArrayAdapter(getApplicationContext(), R.layout.simple_list_item, files.toArray());
+        adapt = new ArrayAdapter(
+                getApplicationContext(), R.layout.simple_list_item, files.toArray());
         lv.setAdapter(adapt);
         lv.setOnItemClickListener(this);
         lv.setOnItemLongClickListener(this);
@@ -65,25 +57,35 @@ public class ListActivity extends AppCompatActivity
     @Override
     public void onItemClick(AdapterView<?> adapt, View v, int position, long id) {
         Intent intent = new Intent(this, MainActivity.class);
-        File f = (File)adapt.getItemAtPosition(position);
+        File f = new File((String)adapt.getItemAtPosition(position));
         ((NotepadApplication)getApplication()).setFile(f);
         startActivity(intent);
     }
 
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-        //DialogFragment dialog = new DeleteDialogFragment();
-        //dialog.show(getFragmentManager(), "DeleteDialogFragment");
-        //adapt.get
+        ((NotepadApplication)getApplication()).getFile().delete();
+        startActivity(new Intent(this, ListActivity.class));
         return true;
     }
 
     @Override
     public void onNamePositiveButtonClick(DialogFragment dialog) {
-        EditText e = (EditText) findViewById(R.id.name_field);
-        String s = e.getText().toString();
-        ((NotepadApplication)getApplication()).getFile().renameTo(new File(s));
-        startActivity(new Intent(this, MainActivity.class));
+        EditText t = (EditText)dialog.getDialog().findViewById(R.id.name_field);
+        String s = t.getText().toString();
+        if(s.equals("") || s == null) {
+            DialogFragment dialog2 = new NameDialogFragment();
+            dialog2.show(getFragmentManager(), "NameDialogFragment2");
+        } else {
+            File f = new File(getApplicationContext().getFilesDir(), s+".txt");
+            try {
+                f.createNewFile();
+            } catch(IOException i) {
+                i.printStackTrace();
+            }
+            ((NotepadApplication)getApplication()).setFile(f);
+            startActivity(new Intent(this, MainActivity.class));
+        }
     }
 
 }
