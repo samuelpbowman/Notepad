@@ -17,8 +17,8 @@ import com.samuel.notepad.R;
 public class SaveDialogFragment extends DialogFragment {
 
     public interface SaveDialogListener {
-        public void onSaveDialogPositiveClick(DialogFragment dialog);
-        public void onSaveDialogNegativeClick(DialogFragment dialog);
+        void onSaveDialogPositiveClick(DialogFragment dialog);
+        void onSaveDialogNegativeClick(DialogFragment dialog);
     }
 
     private SaveDialogListener sdl;
@@ -26,13 +26,15 @@ public class SaveDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.dialog_save_message);
-        builder.setPositiveButton(R.string.dialog_yes_button, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.dialog_yes_button, new DialogInterface.OnClickListener()
+        {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 sdl.onSaveDialogPositiveClick(SaveDialogFragment.this);
             }
         });
-        builder.setNegativeButton(R.string.dialog_no_button, new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.dialog_no_button, new DialogInterface.OnClickListener()
+        {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 sdl.onSaveDialogNegativeClick(SaveDialogFragment.this);

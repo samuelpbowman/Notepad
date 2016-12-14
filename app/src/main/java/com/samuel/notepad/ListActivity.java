@@ -17,6 +17,7 @@ import com.samuel.notepad.dialog.NameDialogFragment;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ListActivity extends AppCompatActivity
         implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener,
@@ -55,16 +56,17 @@ public class ListActivity extends AppCompatActivity
     }
 
     @Override
-    public void onItemClick(AdapterView<?> adapt, View v, int position, long id) {
+    public void onItemClick(AdapterView<?> adapterView, View v, int position, long id) {
         Intent intent = new Intent(this, MainActivity.class);
-        File f = new File((String)adapt.getItemAtPosition(position));
+        File f = new File((String)adapterView.getItemAtPosition(position));
         ((NotepadApplication)getApplication()).setFile(f);
         startActivity(intent);
     }
 
     @Override
-    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-        ((NotepadApplication)getApplication()).getFile().delete();
+    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
+        File f = new File((String)adapterView.getItemAtPosition(position));
+        f.delete();
         startActivity(new Intent(this, ListActivity.class));
         return true;
     }
@@ -73,7 +75,7 @@ public class ListActivity extends AppCompatActivity
     public void onNamePositiveButtonClick(DialogFragment dialog) {
         EditText t = (EditText)dialog.getDialog().findViewById(R.id.name_field);
         String s = t.getText().toString();
-        if(s.equals("") || s == null) {
+        if(s.equals("")) {
             DialogFragment dialog2 = new NameDialogFragment();
             dialog2.show(getFragmentManager(), "NameDialogFragment2");
         } else {
@@ -82,8 +84,9 @@ public class ListActivity extends AppCompatActivity
                 f.createNewFile();
             } catch(IOException i) {
                 i.printStackTrace();
+            } finally {
+                ((NotepadApplication) getApplication()).setFile(f);
             }
-            ((NotepadApplication)getApplication()).setFile(f);
             startActivity(new Intent(this, MainActivity.class));
         }
     }

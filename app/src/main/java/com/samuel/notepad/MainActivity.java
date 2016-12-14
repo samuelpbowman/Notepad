@@ -76,13 +76,14 @@ public class MainActivity extends AppCompatActivity
                 if((((NotepadApplication)getApplication()).getFile() == null)) {
                     DialogFragment fragment = new NameDialogFragment();
                     fragment.show(getFragmentManager(), "NameDialogFragment");
-                }
-                try {
-                    TextHelper.writeTextToFile(text.getText().toString(),
-                            ((NotepadApplication)getApplication()).getFile());
-                    savedSinceLastEdit = true;
-                } catch(IOException i) {
-                    i.printStackTrace();
+                } else {
+                    try {
+                        TextHelper.writeTextToFile(text.getText().toString(),
+                                ((NotepadApplication) getApplication()).getFile());
+                        savedSinceLastEdit = true;
+                    } catch (IOException i) {
+                        i.printStackTrace();
+                    }
                 }
             }
         });
@@ -106,6 +107,12 @@ public class MainActivity extends AppCompatActivity
             DialogFragment fragment = new NameDialogFragment();
             fragment.show(getFragmentManager(), "NameDialogFragment");
         }
+        try {
+            TextHelper.writeTextToFile(text.getText().toString(),
+                    ((NotepadApplication) getApplication()).getFile());
+            savedSinceLastEdit = true;
+        } catch(IOException i) { i.printStackTrace(); }
+        startActivity(new Intent(this, ListActivity.class));
     }
 
     @Override
@@ -115,12 +122,19 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onNamePositiveButtonClick(DialogFragment dialog) {
-        EditText t = (EditText)dialog.getDialog().findViewById(R.id.name_field);
+        EditText t = (EditText)dialog.getView();
         String s = t.getText().toString();
+        File f = new File(getApplicationContext().getFilesDir(), s+".txt");
+        ((NotepadApplication)getApplication()).setFile(f);
         if(s.equals("")) {
             dialog.show(getFragmentManager(), "NameDialogFragment");
         } else {
-            ((NotepadApplication)getApplication()).setName(s);
+            try {
+                TextHelper.writeTextToFile(text.getText().toString(),
+                        ((NotepadApplication)getApplication()).getFile());
+            } catch(IOException i) {
+                i.printStackTrace();
+            }
         }
     }
 }

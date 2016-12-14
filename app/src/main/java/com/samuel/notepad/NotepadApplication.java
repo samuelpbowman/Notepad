@@ -15,12 +15,10 @@ import java.io.File;
 public class NotepadApplication extends Application {
 
     private File file;
-    private String name;
 
     @Override
     public void onCreate() {
         this.file = null;
-        this.name = "";
     }
 
     public File getFile() {
@@ -30,9 +28,5 @@ public class NotepadApplication extends Application {
     public void setFile(File file) {
         this.file = file;
     }
-
-    public String getName() { return name; }
-
-    public void setName(String name) { this.name = name; }
 
 }
