@@ -17,13 +17,12 @@ import com.samuel.notepad.dialog.NameDialogFragment;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class ListActivity extends AppCompatActivity
         implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener,
         NameDialogFragment.NameDialogListener {
 
-    private ArrayAdapter adapt;
+    //private ArrayAdapter adapt;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +37,7 @@ public class ListActivity extends AppCompatActivity
             files.add(f.getAbsolutePath());
         }
 
-        adapt = new ArrayAdapter(
+        ArrayAdapter<File> adapt = new ArrayAdapter(
                 getApplicationContext(), R.layout.simple_list_item, files.toArray());
         lv.setAdapter(adapt);
         lv.setOnItemClickListener(this);
@@ -56,7 +55,7 @@ public class ListActivity extends AppCompatActivity
     }
 
     @Override
-    public void onItemClick(AdapterView<?> adapterView, View v, int position, long id) {
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
         Intent intent = new Intent(this, MainActivity.class);
         File f = new File((String)adapterView.getItemAtPosition(position));
         ((NotepadApplication)getApplication()).setFile(f);
@@ -64,7 +63,7 @@ public class ListActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
+    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
         File f = new File((String)adapterView.getItemAtPosition(position));
         f.delete();
         startActivity(new Intent(this, ListActivity.class));
