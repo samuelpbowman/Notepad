@@ -1,5 +1,6 @@
 package com.samuel.notepad.dialog;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -8,6 +9,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.ViewGroup;
+import android.widget.EditText;
 
 import com.samuel.notepad.R;
 
@@ -20,17 +23,17 @@ import com.samuel.notepad.R;
 
 public class NameDialogFragment extends DialogFragment {
 
+
     public interface NameDialogListener {
         void onNamePositiveButtonClick(DialogFragment dialog);
     }
 
     NameDialogListener ndl;
     @Override
+    @TargetApi(21)
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setView(inflater.inflate(R.layout.dialog_name, null));
+        builder.setView(R.layout.dialog_name);
         builder.setMessage(R.string.dialog_name_message);
         builder.setPositiveButton(
                 R.string.dialog_okay_button, new DialogInterface.OnClickListener() {

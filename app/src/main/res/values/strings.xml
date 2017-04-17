@@ -9,5 +9,4 @@
     <string name="dialog_okay_button">OK</string>
     <string name="dialog_save_message">Would you like to save your file?</string>
     <string name="dialog_name_message">Enter a name for your file:</string>
-    <string name="dialog_delete_message">Are you sure you would like to delete this file?</string>
 </resources>

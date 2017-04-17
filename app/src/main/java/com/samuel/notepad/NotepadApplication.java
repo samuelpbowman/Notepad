@@ -18,7 +18,7 @@ public class NotepadApplication extends Application {
 
     @Override
     public void onCreate() {
-        this.file = null;
+        this.file = new File("");
     }
 
     public File getFile() {

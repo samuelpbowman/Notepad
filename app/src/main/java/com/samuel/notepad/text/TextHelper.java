@@ -6,6 +6,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
+ * Static helper methods for reading the text in and writing text to
+ * the main text field in a MainActivity.
+ *
  * Created by samuel on 12/5/16.
  */
 

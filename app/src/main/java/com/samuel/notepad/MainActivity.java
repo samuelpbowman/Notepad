@@ -56,16 +56,17 @@ public class MainActivity extends AppCompatActivity
                 savedSinceLastEdit = true;
                 if (text.getText().toString().equals("")) return;
                 text.setText("", TextView.BufferType.EDITABLE);
-                ((NotepadApplication)getApplication()).setFile(null);
+                ((NotepadApplication)getApplication()).setFile(new File(""));
             }
         });
         openFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!savedSinceLastEdit) {
+                if (!savedSinceLastEdit && ((NotepadApplication)getApplication()).getFile().length() == 0) {
                     DialogFragment dialog = new SaveDialogFragment();
                     dialog.show(getFragmentManager(), "SaveDialogFragment");
                 } else {
+                    ((NotepadApplication)getApplication()).getFile().delete();
                     startActivity(new Intent(MainActivity.this, ListActivity.class));
                 }
             }
@@ -73,22 +74,12 @@ public class MainActivity extends AppCompatActivity
         saveFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if((((NotepadApplication)getApplication()).getFile() == null)) {
-                    DialogFragment fragment = new NameDialogFragment();
-                    fragment.show(getFragmentManager(), "NameDialogFragment");
-                } else {
-                    try {
-                        TextHelper.writeTextToFile(text.getText().toString(),
-                                ((NotepadApplication) getApplication()).getFile());
-                        savedSinceLastEdit = true;
-                    } catch (IOException i) {
-                        i.printStackTrace();
-                    }
-                }
+                DialogFragment saveFragment = new SaveDialogFragment();
+                saveFragment.show(getFragmentManager(), "SaveDialogFragment");
             }
         });
 
-        if((((NotepadApplication)getApplication()).getFile() == null)) {
+        if((((NotepadApplication)getApplication()).getFile().length() == 0)) {
             text.setText("");
         } else {
             try {
@@ -103,16 +94,16 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onSaveDialogPositiveClick(DialogFragment dialog) {
-        if(((NotepadApplication)getApplication()).getFile() == null) {
+        if(((NotepadApplication)getApplication()).getFile().getPath().equals("")) {
             DialogFragment fragment = new NameDialogFragment();
             fragment.show(getFragmentManager(), "NameDialogFragment");
+        } else {
+            try {
+                transitionIntoListActivity();
+            } catch (IOException i) {
+                i.printStackTrace();
+            }
         }
-        try {
-            TextHelper.writeTextToFile(text.getText().toString(),
-                    ((NotepadApplication) getApplication()).getFile());
-            savedSinceLastEdit = true;
-        } catch(IOException i) { i.printStackTrace(); }
-        startActivity(new Intent(this, ListActivity.class));
     }
 
     @Override
@@ -122,7 +113,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onNamePositiveButtonClick(DialogFragment dialog) {
-        EditText t = (EditText)dialog.getView();
+        EditText t = (EditText)dialog.getDialog().findViewById(R.id.name_field);
         String s = t.getText().toString();
         File f = new File(getApplicationContext().getFilesDir(), s+".txt");
         ((NotepadApplication)getApplication()).setFile(f);
@@ -130,11 +121,17 @@ public class MainActivity extends AppCompatActivity
             dialog.show(getFragmentManager(), "NameDialogFragment");
         } else {
             try {
-                TextHelper.writeTextToFile(text.getText().toString(),
-                        ((NotepadApplication)getApplication()).getFile());
+                transitionIntoListActivity();
             } catch(IOException i) {
                 i.printStackTrace();
             }
         }
+    }
+
+    private void transitionIntoListActivity() throws IOException {
+        TextHelper.writeTextToFile(text.getText().toString(),
+                ((NotepadApplication) getApplication()).getFile());
+        savedSinceLastEdit = true;
+        startActivity(new Intent(this, ListActivity.class));
     }
 }
