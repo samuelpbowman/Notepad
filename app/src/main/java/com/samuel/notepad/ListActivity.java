@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.samuel.notepad.dialog.DeleteDialogFragment;
 import com.samuel.notepad.dialog.NameDialogFragment;
 
 import java.io.File;
@@ -20,7 +21,7 @@ import java.util.ArrayList;
 
 public class ListActivity extends AppCompatActivity
         implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener,
-        NameDialogFragment.NameDialogListener {
+        NameDialogFragment.NameDialogListener, DeleteDialogFragment.DeleteDialogListener {
 
     //private ArrayAdapter adapt;
     @Override
@@ -32,13 +33,13 @@ public class ListActivity extends AppCompatActivity
 
         ListView lv = (ListView) findViewById(R.id.documents);
         ArrayList<String> files = new ArrayList<>();
-        for(File f : getApplicationContext().getFilesDir().listFiles()) {
-            if(f.getName().equals("instant-run")) continue;
-            files.add(f.getAbsolutePath());
+        for(File f : ListActivity.this.getFilesDir().listFiles()) {
+            //if(f.getName().equals("instant-run")) continue;
+            files.add(f.getName());
         }
 
         ArrayAdapter<File> adapt = new ArrayAdapter(
-                getApplicationContext(), R.layout.simple_list_item, files.toArray());
+                ListActivity.this, R.layout.simple_list_item, files.toArray());
         lv.setAdapter(adapt);
         lv.setOnItemClickListener(this);
         lv.setOnItemLongClickListener(this);
@@ -57,7 +58,7 @@ public class ListActivity extends AppCompatActivity
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
         Intent intent = new Intent(this, MainActivity.class);
-        File f = new File((String)adapterView.getItemAtPosition(position));
+        File f = new File(getFilesDir().getAbsolutePath() + "/" + adapterView.getItemAtPosition(position));
         ((NotepadApplication)getApplication()).setFile(f);
         startActivity(intent);
     }
@@ -79,15 +80,18 @@ public class ListActivity extends AppCompatActivity
             dialog2.show(getFragmentManager(), "NameDialogFragment2");
         } else {
             File f = new File(getApplicationContext().getFilesDir(), s+".txt");
-            try {
-                f.createNewFile();
-            } catch(IOException i) {
-                i.printStackTrace();
-            } finally {
-                ((NotepadApplication) getApplication()).setFile(f);
-            }
+            ((NotepadApplication) getApplication()).setFile(f);
             startActivity(new Intent(this, MainActivity.class));
         }
     }
 
+    @Override
+    public void onDeleteDialogPositiveButtonClick(DialogFragment dialog) {
+        //TODO implement
+    }
+
+    @Override
+    public void onDeleteDialogNegativeButtonClick(DialogFragment dialog) {
+        //TODO implement
+    }
 }

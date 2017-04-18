@@ -3,10 +3,11 @@
     <string name="new_file">New</string>
     <string name="openFile">Open</string>
     <string name="saveFile">Save</string>
-    <string name="title_activity_list">ListActivity</string>
+    <string name="title_activity_list">Select a File</string>
     <string name="dialog_yes_button">Yes</string>
     <string name="dialog_no_button">No</string>
     <string name="dialog_okay_button">OK</string>
     <string name="dialog_save_message">Would you like to save your file?</string>
     <string name="dialog_name_message">Enter a name for your file:</string>
+    <string name="dialog_delete_message">Are you sure you want to delete?</string>
 </resources>
