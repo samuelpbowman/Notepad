@@ -93,27 +93,37 @@ public class MainActivity extends AppCompatActivity
         if(((NotepadApplication)getApplication()).getFile().getName().equals("")) {
             NameDialogFragment fragment = new NameDialogFragment();
             fragment.show(getFragmentManager(), "NameDialogFragment");
+        } else {
+            try {
+                TextHelper.writeTextToFile(text.getText().toString(), ((NotepadApplication) getApplication()).getFile());
+            } catch (IOException i) {
+                i.printStackTrace();
+            }
         }
-        try {
-            TextHelper.writeTextToFile(text.getText().toString(), ((NotepadApplication)getApplication()).getFile());
-        } catch (IOException i) { i.printStackTrace(); }
     }
 
     @Override
     public void onSaveDialogNegativeClick(DialogFragment dialog) {
-
+        //do nothing
     }
 
     @Override
     public void onNamePositiveButtonClick(DialogFragment dialog) {
         EditText edit = (EditText) dialog.getDialog().findViewById(R.id.name_field);
-        String str = edit.toString();
-        File file = new File(getApplication().getFilesDir(), str + ".txt" );
+        String str = edit.getText().toString();
+        File file = new File(getApplicationContext().getFilesDir(), str + ".txt" );
+        if(str.equals("")) {
+            NameDialogFragment fragment = new NameDialogFragment();
+            fragment.show(getFragmentManager(), "NameDialogFragment");
+        } else {
+            try {
+                TextHelper.writeTextToFile(text.getText().toString(), file);
+                ((NotepadApplication)getApplication()).setFile(file);
+                startActivity(new Intent(MainActivity.this, ListActivity.class));
+            } catch (IOException i) {
+                i.printStackTrace();
+            }
+        }
 
-        try {
-            TextHelper.writeTextToFile(str, file);
-        } catch(IOException i) { i.printStackTrace(); }
-        ((NotepadApplication)getApplication()).setFile(file);
-        startActivity(new Intent(MainActivity.this, ListActivity.class));
     }
 }

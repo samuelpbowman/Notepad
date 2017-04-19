@@ -23,7 +23,7 @@ public class ListActivity extends AppCompatActivity
         implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener,
         NameDialogFragment.NameDialogListener, DeleteDialogFragment.DeleteDialogListener {
 
-    //private ArrayAdapter adapt;
+    private File selected;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,8 +34,8 @@ public class ListActivity extends AppCompatActivity
         ListView lv = (ListView) findViewById(R.id.documents);
         ArrayList<String> files = new ArrayList<>();
         for(File f : ListActivity.this.getFilesDir().listFiles()) {
-            //if(f.getName().equals("instant-run")) continue;
-            files.add(f.getName());
+            if(f.getName().contains("instant-run")) continue;
+            files.add(f.getName().substring(0, f.getName().length() - 4));
         }
 
         ArrayAdapter<File> adapt = new ArrayAdapter(
@@ -58,40 +58,49 @@ public class ListActivity extends AppCompatActivity
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
         Intent intent = new Intent(this, MainActivity.class);
-        File f = new File(getFilesDir().getAbsolutePath() + "/" + adapterView.getItemAtPosition(position));
+        File f = new File(getFilesDir().getAbsolutePath() + "/" + adapterView.getItemAtPosition(position) + ".txt");
         ((NotepadApplication)getApplication()).setFile(f);
         startActivity(intent);
     }
 
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
-        File f = new File((String)adapterView.getItemAtPosition(position));
-        f.delete();
-        startActivity(new Intent(this, ListActivity.class));
+        selected = new File(getApplicationContext().getFilesDir(), "/" + adapterView.getItemAtPosition(position) + ".txt");
+        DialogFragment fragment = new DeleteDialogFragment();
+        fragment.show(getFragmentManager(), "DeleteDialogFragment");
         return true;
     }
 
     @Override
     public void onNamePositiveButtonClick(DialogFragment dialog) {
         EditText t = (EditText)dialog.getDialog().findViewById(R.id.name_field);
-        String s = t.getText().toString();
-        if(s.equals("")) {
+        String str = t.getText().toString();
+        if(str.equals("")) {
             DialogFragment dialog2 = new NameDialogFragment();
             dialog2.show(getFragmentManager(), "NameDialogFragment2");
         } else {
-            File f = new File(getApplicationContext().getFilesDir(), s+".txt");
-            ((NotepadApplication) getApplication()).setFile(f);
+            File file = new File(getApplicationContext().getFilesDir(), str + ".txt");
+            ((NotepadApplication) getApplication()).setFile(file);
             startActivity(new Intent(this, MainActivity.class));
         }
     }
 
     @Override
     public void onDeleteDialogPositiveButtonClick(DialogFragment dialog) {
-        //TODO implement
+        selected.delete();
+        ListView lv = (ListView) findViewById(R.id.documents);
+        ArrayList<String> files = new ArrayList<>();
+        for(File f : ListActivity.this.getFilesDir().listFiles()) {
+            files.add(f.getName());
+        }
+
+        ArrayAdapter<File> adapt = new ArrayAdapter(
+                ListActivity.this, R.layout.simple_list_item, files.toArray());
+        lv.setAdapter(adapt);
     }
 
     @Override
     public void onDeleteDialogNegativeButtonClick(DialogFragment dialog) {
-        //TODO implement
+        //do nothing
     }
 }
