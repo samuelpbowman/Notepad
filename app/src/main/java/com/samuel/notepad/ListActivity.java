@@ -16,7 +16,6 @@ import com.samuel.notepad.dialog.DeleteDialogFragment;
 import com.samuel.notepad.dialog.NameDialogFragment;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class ListActivity extends AppCompatActivity
@@ -91,7 +90,8 @@ public class ListActivity extends AppCompatActivity
         ListView lv = (ListView) findViewById(R.id.documents);
         ArrayList<String> files = new ArrayList<>();
         for(File f : ListActivity.this.getFilesDir().listFiles()) {
-            files.add(f.getName());
+            if(f.getName().contains("instant-run")) continue;
+            files.add(f.getName().substring(0, f.getName().length() - 4));
         }
 
         ArrayAdapter<File> adapt = new ArrayAdapter(

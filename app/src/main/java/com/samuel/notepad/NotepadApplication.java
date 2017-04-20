@@ -2,7 +2,10 @@ package com.samuel.notepad;
 
 import android.app.Application;
 
+import com.samuel.notepad.text.TextHelper;
+
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Application class for the Notepad project I am working
@@ -30,4 +33,21 @@ public class NotepadApplication extends Application {
         this.file = file;
     }
 
+    public void saveFile(String string) {
+        try {
+            TextHelper.writeTextToFile(string, this.file);
+        } catch(IOException i) {
+            i.printStackTrace();
+        }
+    }
+
+    public String openFile() {
+        String string = "";
+        try {
+            string = TextHelper.readTextFromFile(this.file);
+        } catch(IOException i) {
+            i.printStackTrace();
+        }
+        return string;
+    }
 }

@@ -14,24 +14,25 @@ import android.widget.TextView.BufferType;
 
 import com.samuel.notepad.dialog.NameDialogFragment;
 import com.samuel.notepad.dialog.SaveDialogFragment;
-import com.samuel.notepad.text.TextHelper;
 
 import java.io.File;
-import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity
         implements SaveDialogFragment.SaveDialogListener, NameDialogFragment.NameDialogListener {
 
     private EditText text;
+    private TextView count;
     private boolean savedSinceLastEdit;
+    private String called;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         this.text = (EditText) findViewById(R.id.editText);
+        this.count = (TextView) findViewById(R.id.charCount);
 
         text.addTextChangedListener(new TextWatcher() {
             @Override
@@ -40,6 +41,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 savedSinceLastEdit = false;
+                int counter = MainActivity.this.text.getText().toString().length();
+                MainActivity.this.count.setText(String.valueOf(counter));
             }
 
             @Override
@@ -53,77 +56,88 @@ public class MainActivity extends AppCompatActivity
         newFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                savedSinceLastEdit = true;
-                if (text.getText().toString().equals("")) return;
-                text.setText("", TextView.BufferType.EDITABLE);
-                ((NotepadApplication)getApplication()).setFile(new File(""));
+                MainActivity.this.called = "New";
+                if (!(savedSinceLastEdit || MainActivity.this.text.getText().toString().trim().equals(""))) {
+                    DialogFragment fragment = new SaveDialogFragment();
+                    fragment.show(getFragmentManager(), "SaveDialogFragmentNew");
+                } else if(MainActivity.this.text.getText().toString().trim().equals("")) {
+                    MainActivity.this.text.setText("");
+                    ((NotepadApplication)getApplication()).setFile(new File(""));
+                }
             }
         });
+
         openFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, ListActivity.class));
+                if(!savedSinceLastEdit) {
+                    MainActivity.this.called = "Open";
+                    DialogFragment fragment = new SaveDialogFragment();
+                    fragment.show(getFragmentManager(), "SaveDialogFragmentOpen");
+                } else {
+                    startActivity(new Intent(MainActivity.this, ListActivity.class));
+                }
             }
         });
+
         saveFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(savedSinceLastEdit) return;
-                DialogFragment saveFragment = new SaveDialogFragment();
-                saveFragment.show(getFragmentManager(), "SaveDialogFragment");
+                MainActivity.this.called = "Save";
+                if(!savedSinceLastEdit) {
+                    DialogFragment fragment = new SaveDialogFragment();
+                    fragment.show(getFragmentManager(), "SaveDialogFragmentSave");
+            }
             }
         });
 
         if(!(((NotepadApplication)getApplication()).getFile().exists())) {
             text.setText("");
         } else {
-            try {
-                text.setText(TextHelper.readTextFromFile(
-                        ((NotepadApplication)getApplication()).getFile()), BufferType.EDITABLE);
-            } catch(IOException i) {
-                i.printStackTrace();
-            }
+            String string = ((NotepadApplication)getApplication()).openFile();
+            text.setText(string, BufferType.EDITABLE);
         }
-        savedSinceLastEdit = this.text.getText().toString().equals("");
+        savedSinceLastEdit = true;
     }
 
     @Override
     public void onSaveDialogPositiveClick(DialogFragment dialog) {
-        savedSinceLastEdit = true;
         if(((NotepadApplication)getApplication()).getFile().getName().equals("")) {
-            NameDialogFragment fragment = new NameDialogFragment();
-            fragment.show(getFragmentManager(), "NameDialogFragment");
-        } else {
-            try {
-                TextHelper.writeTextToFile(text.getText().toString(), ((NotepadApplication) getApplication()).getFile());
-            } catch (IOException i) {
-                i.printStackTrace();
+            DialogFragment fragment = new NameDialogFragment();
+            String tag;
+            if(dialog.getTag().equals("SaveDialogFragmentOpen")) {
+                tag = "NameDialogFragmentTransition";
+            } else {
+                tag = "NameDialogFragment";
             }
+            fragment.show(getFragmentManager(), tag);
+        } else {
+            String string = text.getText().toString();
+            ((NotepadApplication) getApplication()).saveFile(string);
         }
+        savedSinceLastEdit = true;
+        int counter = text.getText().toString().length();
+        this.count.setText(String.valueOf(counter));
     }
 
     @Override
     public void onSaveDialogNegativeClick(DialogFragment dialog) {
-        //do nothing
+        if(called.equals("Open"))
+            startActivity(new Intent(this, ListActivity.class));
+        else if(called.equals("New"))
+            this.text.setText("", BufferType.EDITABLE);
     }
 
     @Override
     public void onNamePositiveButtonClick(DialogFragment dialog) {
-        EditText edit = (EditText) dialog.getDialog().findViewById(R.id.name_field);
-        String str = edit.getText().toString();
-        File file = new File(getApplicationContext().getFilesDir(), str + ".txt" );
-        if(str.equals("")) {
-            NameDialogFragment fragment = new NameDialogFragment();
-            fragment.show(getFragmentManager(), "NameDialogFragment");
-        } else {
-            try {
-                TextHelper.writeTextToFile(text.getText().toString(), file);
-                ((NotepadApplication)getApplication()).setFile(file);
-                startActivity(new Intent(MainActivity.this, ListActivity.class));
-            } catch (IOException i) {
-                i.printStackTrace();
-            }
-        }
+        EditText edit = (EditText)dialog.getDialog().findViewById(R.id.name_field);
+        String name = edit.getText().toString();
 
+        File file = new File(getApplicationContext().getFilesDir(), name + ".txt");
+        ((NotepadApplication)getApplication()).setFile(file);
+        ((NotepadApplication)getApplication()).saveFile(this.text.getText().toString());
+
+        if(called.equals("Open"))
+            startActivity(new Intent(this, ListActivity.class));
     }
 }
