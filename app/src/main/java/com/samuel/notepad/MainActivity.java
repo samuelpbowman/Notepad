@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity
                 if (!(savedSinceLastEdit || MainActivity.this.text.getText().toString().trim().equals(""))) {
                     DialogFragment fragment = new SaveDialogFragment();
                     fragment.show(getFragmentManager(), "SaveDialogFragmentNew");
-                } else if(MainActivity.this.text.getText().toString().trim().equals("")) {
+                } else {
                     MainActivity.this.text.setText("");
                     ((NotepadApplication)getApplication()).setFile(new File(""));
                 }

@@ -9,7 +9,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:name="com.samuel.notepad.NotepadApplication">
-        <!--android:textColor="@colors/textColor"-->
         <activity android:name="com.samuel.notepad.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
