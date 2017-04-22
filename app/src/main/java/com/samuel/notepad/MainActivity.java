@@ -9,6 +9,8 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 
@@ -46,8 +48,28 @@ public class MainActivity extends AppCompatActivity
             }
 
             @Override
-            public void afterTextChanged(Editable editable) {}
+            public void afterTextChanged(Editable editable) {/*
+                LinearLayout buttons = (LinearLayout) findViewById(R.id.buttons);
+                RelativeLayout filler = (RelativeLayout) findViewById(R.id.filler);
+
+                float delta = MainActivity.this.calculateDelta(MainActivity.this.text, filler);
+
+                MainActivity.this.text.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, 0, .1f + delta));
+                buttons.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, 0, .1f));
+                filler.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, 0, .8f - delta));*/
+            }
         });
+
+        if(!(((NotepadApplication)getApplication()).getFile().exists())) {
+            this.text.setText("");
+        } else {
+            String string = ((NotepadApplication)getApplication()).openFile();
+            text.setText(string, BufferType.EDITABLE);
+        }
+        savedSinceLastEdit = true;
 
         Button newFile = (Button) findViewById(R.id.newBut);
         Button openFile = (Button) findViewById(R.id.openBut);
@@ -87,17 +109,9 @@ public class MainActivity extends AppCompatActivity
                 if(!savedSinceLastEdit) {
                     DialogFragment fragment = new SaveDialogFragment();
                     fragment.show(getFragmentManager(), "SaveDialogFragmentSave");
-            }
+                }
             }
         });
-
-        if(!(((NotepadApplication)getApplication()).getFile().exists())) {
-            text.setText("");
-        } else {
-            String string = ((NotepadApplication)getApplication()).openFile();
-            text.setText(string, BufferType.EDITABLE);
-        }
-        savedSinceLastEdit = true;
     }
 
     @Override
@@ -139,5 +153,10 @@ public class MainActivity extends AppCompatActivity
 
         if(called.equals("Open"))
             startActivity(new Intent(this, ListActivity.class));
+    }
+
+    private float calculateDelta(View view1, View view2) {
+        //TODO implement
+        return 0f;
     }
 }
