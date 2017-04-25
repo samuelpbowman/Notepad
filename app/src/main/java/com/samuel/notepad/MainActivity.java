@@ -1,5 +1,6 @@
 package com.samuel.notepad;
 
+import android.annotation.TargetApi;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -25,7 +26,7 @@ public class MainActivity extends AppCompatActivity
     private EditText text;
     private TextView count;
     private boolean savedSinceLastEdit;
-    private String called;
+    private char called;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -35,6 +36,27 @@ public class MainActivity extends AppCompatActivity
 
         this.text = (EditText) findViewById(R.id.editText);
         this.count = (TextView) findViewById(R.id.charCount);
+        this.called = '\0';
+
+        if(!(((NotepadApplication)getApplication()).getFile().exists())) {
+            this.text.clearComposingText();
+        } else {
+            String string = ((NotepadApplication)getApplication()).openFile();
+            text.setText(string, BufferType.EDITABLE);
+        }
+        savedSinceLastEdit = true;
+
+        LinearLayout buttons = (LinearLayout) findViewById(R.id.buttons);
+        RelativeLayout filler = (RelativeLayout) findViewById(R.id.filler);
+
+        float delta = MainActivity.this.calculateDelta();
+
+        MainActivity.this.text.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, 0, .1f + delta));
+        buttons.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, 0, .1f));
+        filler.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, 0, .8f - delta));
 
         text.addTextChangedListener(new TextWatcher() {
             @Override
@@ -48,28 +70,20 @@ public class MainActivity extends AppCompatActivity
             }
 
             @Override
-            public void afterTextChanged(Editable editable) {/*
+            public void afterTextChanged(Editable editable) {
                 LinearLayout buttons = (LinearLayout) findViewById(R.id.buttons);
                 RelativeLayout filler = (RelativeLayout) findViewById(R.id.filler);
 
-                float delta = MainActivity.this.calculateDelta(MainActivity.this.text, filler);
+                float delta = MainActivity.this.calculateDelta();
 
                 MainActivity.this.text.setLayoutParams(new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT, 0, .1f + delta));
                 buttons.setLayoutParams(new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT, 0, .1f));
                 filler.setLayoutParams(new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT, 0, .8f - delta));*/
+                        LinearLayout.LayoutParams.MATCH_PARENT, 0, .8f - delta));
             }
         });
-
-        if(!(((NotepadApplication)getApplication()).getFile().exists())) {
-            this.text.setText("");
-        } else {
-            String string = ((NotepadApplication)getApplication()).openFile();
-            text.setText(string, BufferType.EDITABLE);
-        }
-        savedSinceLastEdit = true;
 
         Button newFile = (Button) findViewById(R.id.newBut);
         Button openFile = (Button) findViewById(R.id.openBut);
@@ -78,8 +92,8 @@ public class MainActivity extends AppCompatActivity
         newFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity.this.called = "New";
-                if (!(savedSinceLastEdit || MainActivity.this.text.getText().toString().trim().equals(""))) {
+                MainActivity.this.called = 'n';
+                if (!savedSinceLastEdit && MainActivity.this.text.getText().toString().isEmpty()) {
                     DialogFragment fragment = new SaveDialogFragment();
                     fragment.show(getFragmentManager(), "SaveDialogFragmentNew");
                 } else {
@@ -93,7 +107,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 if(!savedSinceLastEdit) {
-                    MainActivity.this.called = "Open";
+                    MainActivity.this.called = 'o';
                     DialogFragment fragment = new SaveDialogFragment();
                     fragment.show(getFragmentManager(), "SaveDialogFragmentOpen");
                 } else {
@@ -105,18 +119,20 @@ public class MainActivity extends AppCompatActivity
         saveFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity.this.called = "Save";
+                MainActivity.this.called = 's';
                 if(!savedSinceLastEdit) {
                     DialogFragment fragment = new SaveDialogFragment();
                     fragment.show(getFragmentManager(), "SaveDialogFragmentSave");
                 }
             }
         });
+        int charCount = this.text.getText().toString().length();
+        this.count.setText(String.valueOf(charCount));
     }
 
     @Override
     public void onSaveDialogPositiveClick(DialogFragment dialog) {
-        if(((NotepadApplication)getApplication()).getFile().getName().equals("")) {
+        if(((NotepadApplication)getApplication()).getFile().getName().isEmpty()) {
             DialogFragment fragment = new NameDialogFragment();
             String tag;
             if(dialog.getTag().equals("SaveDialogFragmentOpen")) {
@@ -136,10 +152,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onSaveDialogNegativeClick(DialogFragment dialog) {
-        if(called.equals("Open"))
+        if(called == 'o')
             startActivity(new Intent(this, ListActivity.class));
-        else if(called.equals("New"))
-            this.text.setText("", BufferType.EDITABLE);
+        else //if(called == 'n')
+            this.text.clearComposingText();
     }
 
     @Override
@@ -151,12 +167,20 @@ public class MainActivity extends AppCompatActivity
         ((NotepadApplication)getApplication()).setFile(file);
         ((NotepadApplication)getApplication()).saveFile(this.text.getText().toString());
 
-        if(called.equals("Open"))
+        if(called == 'o')
             startActivity(new Intent(this, ListActivity.class));
     }
 
-    private float calculateDelta(View view1, View view2) {
-        //TODO implement
-        return 0f;
+    @TargetApi(16)
+    private float calculateDelta() {
+        int lines = this.text.getText().length() / 52;
+        float t;
+        if(lines == 0)
+            t = 0.1f;
+        else
+            t = 0.1f * lines;
+        float r = 0.9f - t;
+        float delta = t - (8/9f)*r + 0.6f;
+        return (Math.abs(delta) < 0.8f) ? Math.abs(delta) : 0.8f;
     }
 }
