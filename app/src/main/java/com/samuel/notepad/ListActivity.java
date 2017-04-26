@@ -37,8 +37,8 @@ public class ListActivity extends AppCompatActivity
             files.add(f.getName().substring(0, f.getName().length() - 4));
         }
 
-        ArrayAdapter<File> adapt = new ArrayAdapter(
-                ListActivity.this, R.layout.simple_list_item, files.toArray());
+        ArrayAdapter<String> adapt = new ArrayAdapter<>(
+                ListActivity.this, R.layout.simple_list_item, files.toArray(new String[files.toArray().length]));
         lv.setAdapter(adapt);
         lv.setOnItemClickListener(this);
         lv.setOnItemLongClickListener(this);
@@ -94,8 +94,8 @@ public class ListActivity extends AppCompatActivity
             files.add(f.getName().substring(0, f.getName().length() - 4));
         }
 
-        ArrayAdapter<File> adapt = new ArrayAdapter(
-                ListActivity.this, R.layout.simple_list_item, files.toArray());
+        ArrayAdapter<String> adapt = new ArrayAdapter<>(
+                ListActivity.this, R.layout.simple_list_item, files.toArray(new String[files.toArray().length]));
         lv.setAdapter(adapt);
     }
 

@@ -11,54 +11,34 @@
     android:id="@+id/container"
     tools:context="com.samuel.notepad.MainActivity">
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:inputType="textMultiLine"
-        android:ems="10"
-        android:id="@+id/editText"
-        android:layout_weight="0.1"/>
-
     <LinearLayout
-        android:id="@+id/buttons"
-        android:layout_height="0dp"
-        android:layout_width="match_parent"
-        android:layout_weight="0.1">
+        android:id="@+id/banner"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
 
-        <Button
-            android:layout_width="wrap_content"
+        <Spinner
+            android:id="@+id/options"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@+id/newBut"
-            android:text="@string/new_file" />
-
-        <Button
-            android:text="@string/openFile"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/openBut" />
-
-        <Button
-            android:text="@string/saveFile"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/saveBut" />
+            android:layout_weight="0.85"/>
 
         <TextView
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingTop="14dp"
+            android:padding="16dp"
             android:id="@+id/charCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=""
+            android:layout_weight="0.15"
             android:layout_gravity="end" />
 
     </LinearLayout>
 
-    <RelativeLayout
-        android:id="@+id/filler"
+    <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.8"/>
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:id="@+id/editText" />
+
 
 </LinearLayout>
