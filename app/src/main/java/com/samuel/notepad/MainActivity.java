@@ -15,6 +15,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 
+//import com.google.android.gms.ads.AdView;
 import com.samuel.notepad.dialog.NameDialogFragment;
 import com.samuel.notepad.dialog.SaveDialogFragment;
 
@@ -27,6 +28,9 @@ public class MainActivity extends AppCompatActivity
 
     private EditText text;
     private TextView count;
+    private Spinner spinner;
+    private ArrayList<String> options;
+    //private AdView ad;
     private boolean savedSinceLastEdit;
     private boolean needsNameDialog;
     private boolean needsListActivity;
@@ -40,11 +44,15 @@ public class MainActivity extends AppCompatActivity
 
         this.text = (EditText) findViewById(R.id.editText);
         this.count = (TextView) findViewById(R.id.charCount);
+        //this.ad = (AdView) findViewById(R.id.ad);
 
         if((((NotepadApplication)getApplication()).getFile().exists())) {
             String string = ((NotepadApplication)getApplication()).openFile();
             text.setText(string, BufferType.EDITABLE);
         }
+        int counter = MainActivity.this.text.getText().toString().length();
+        this.count.setText(String.valueOf(counter));
+
         String name = ((NotepadApplication)getApplication()).getFile().getName();
         this.savedSinceLastEdit = true;
         this.needsNameDialog = false;
@@ -66,9 +74,10 @@ public class MainActivity extends AppCompatActivity
             public void afterTextChanged(Editable editable) {}
         });
 
-        Spinner spinner = (Spinner) findViewById(R.id.options);
-        ArrayList<String> options = new ArrayList<>();
-        options.add((((NotepadApplication)getApplication()).getFile().getName().isEmpty() ? "Untitled" : name));
+        spinner = (Spinner) findViewById(R.id.options);
+        options = new ArrayList<>();
+        options.add((((NotepadApplication)getApplication()).getFile().getName().isEmpty() ?
+                "Untitled" : name.substring(0, name.length() - 4)));
         options.addAll(Arrays.asList(getResources().getStringArray(R.array.options_array)));
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.simple_list_item, options);
@@ -85,11 +94,18 @@ public class MainActivity extends AppCompatActivity
                         if(!((NotepadApplication)getApplication()).getFile().exists())
                             MainActivity.this.needsNameDialog = true;
                         if(savedSinceLastEdit) {
-                            MainActivity.this.text.setText("");
-                            ((NotepadApplication)getApplication()).setFile(new File(""));
+                            options.remove(0);
+                            options.add(0, "Untitled");
+                            ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                                    MainActivity.this, R.layout.simple_list_item, options);
+                            spinner.setAdapter(adapter);
                         } else {
                             SaveDialogFragment fragment = new SaveDialogFragment();
                             fragment.show(getFragmentManager(), "SaveDialogFragment");
+                        }
+                        if(!MainActivity.this.needsNameDialog) {
+                            MainActivity.this.text.setText("");
+                            ((NotepadApplication)getApplication()).setFile(new File(""));
                         }
                         break;
                     case 2:
@@ -116,7 +132,6 @@ public class MainActivity extends AppCompatActivity
                     case 4:
                         view.setSelection(0);
                         Snackbar.make(findViewById(R.id.container), R.string.coming_soon, Snackbar.LENGTH_SHORT).show();
-                        break;
                 }
             }
         });
@@ -163,6 +178,12 @@ public class MainActivity extends AppCompatActivity
         File file = new File(getApplicationContext().getFilesDir(), name + ".txt");
         ((NotepadApplication)getApplication()).setFile(file);
         ((NotepadApplication)getApplication()).saveFile(this.text.getText().toString());
+
+        options.remove(0);
+        options.add(0, ((NotepadApplication)getApplication()).getFile().getName().isEmpty() ?
+                "Untitled" : name.substring(0, name.length() - 4));
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.simple_list_item, options);
+        spinner.setAdapter(adapter);
 
         if(needsListActivity)
             startActivity(new Intent(this, ListActivity.class));

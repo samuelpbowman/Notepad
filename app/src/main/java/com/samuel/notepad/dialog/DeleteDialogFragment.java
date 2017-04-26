@@ -11,6 +11,10 @@ import android.os.Bundle;
 import com.samuel.notepad.R;
 
 /**
+ * Class containing the method to create a delete dialog
+ * as well as an interface with abstract methods which
+ * define what the different buttons do.
+ *
  * Created by samuel on 4/17/17.
  */
 
@@ -19,6 +23,7 @@ public class DeleteDialogFragment extends DialogFragment {
     public interface DeleteDialogListener {
         void onDeleteDialogPositiveButtonClick(DialogFragment dialog);
         void onDeleteDialogNegativeButtonClick(DialogFragment dialog);
+        void onDeleteDialogNeutralButtonClick(DialogFragment dialog);
     }
 
     private DeleteDialogListener dialog;
@@ -39,6 +44,12 @@ public class DeleteDialogFragment extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialog.onDeleteDialogNegativeButtonClick(DeleteDialogFragment.this);
+            }
+        });
+        builder.setNeutralButton(R.string.dialog_rename_button, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialog.onDeleteDialogNeutralButtonClick(DeleteDialogFragment.this);
             }
         });
         return builder.create();

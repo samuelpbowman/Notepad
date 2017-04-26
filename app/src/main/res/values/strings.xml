@@ -6,6 +6,7 @@
     <string name="dialog_okay_button">OK</string>
     <string name="dialog_save_message">Would you like to save your file?</string>
     <string name="dialog_name_message">Enter a name for your file:</string>
+    <string name="dialog_rename_button">Rename</string>
     <string name="dialog_delete_message">Are you sure you want to delete?</string>
     <string name="coming_soon">Coming Soon!!</string>
     <string name="untitled">Untitled</string>

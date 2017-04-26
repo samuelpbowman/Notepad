@@ -4,6 +4,7 @@ import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 public class ListActivity extends AppCompatActivity
         implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener,
         NameDialogFragment.NameDialogListener, DeleteDialogFragment.DeleteDialogListener {
-
+    private ListView view;
     private File selected;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +31,7 @@ public class ListActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ListView lv = (ListView) findViewById(R.id.documents);
+        view = (ListView) findViewById(R.id.documents);
         ArrayList<String> files = new ArrayList<>();
         for(File f : ListActivity.this.getFilesDir().listFiles()) {
             if(f.getName().contains("instant-run")) continue;
@@ -39,9 +40,9 @@ public class ListActivity extends AppCompatActivity
 
         ArrayAdapter<String> adapt = new ArrayAdapter<>(
                 ListActivity.this, R.layout.simple_list_item, files.toArray(new String[files.toArray().length]));
-        lv.setAdapter(adapt);
-        lv.setOnItemClickListener(this);
-        lv.setOnItemLongClickListener(this);
+        view.setAdapter(adapt);
+        view.setOnItemClickListener(this);
+        view.setOnItemLongClickListener(this);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -86,8 +87,9 @@ public class ListActivity extends AppCompatActivity
 
     @Override
     public void onDeleteDialogPositiveButtonClick(DialogFragment dialog) {
-        selected.delete();
-        ListView lv = (ListView) findViewById(R.id.documents);
+        if(selected.delete())
+            Snackbar.make(view, "Deleted", Snackbar.LENGTH_SHORT).show();
+
         ArrayList<String> files = new ArrayList<>();
         for(File f : ListActivity.this.getFilesDir().listFiles()) {
             if(f.getName().contains("instant-run")) continue;
@@ -96,11 +98,16 @@ public class ListActivity extends AppCompatActivity
 
         ArrayAdapter<String> adapt = new ArrayAdapter<>(
                 ListActivity.this, R.layout.simple_list_item, files.toArray(new String[files.toArray().length]));
-        lv.setAdapter(adapt);
+        view.setAdapter(adapt);
     }
 
     @Override
     public void onDeleteDialogNegativeButtonClick(DialogFragment dialog) {
         //do nothing
+    }
+
+    @Override
+    public void onDeleteDialogNeutralButtonClick(DialogFragment dialog) {
+        //TODO implement
     }
 }
