@@ -2,7 +2,7 @@ package com.samuel.notepad;
 
 import android.app.Application;
 
-import com.samuel.notepad.text.TextHelper;
+import com.samuel.notepad.helper.TextHelper;
 
 import java.io.File;
 import java.io.IOException;

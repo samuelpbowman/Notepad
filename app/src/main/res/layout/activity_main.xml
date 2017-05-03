@@ -28,7 +28,6 @@
             android:id="@+id/charCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=""
             android:layout_weight="0.15"
             android:layout_gravity="end" />
 
@@ -40,13 +39,5 @@
         android:inputType="textMultiLine"
         android:ems="10"
         android:id="@+id/editText" />
-
-    <!--com.google.android.gms.ads.AdView
-        android:id="@+id/ad"
-        com.google.android.gms:adSize="SMART_BANNER"
-        com.google.android.gms:adUnitId="TestAd"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" /-->
-
 
 </LinearLayout>

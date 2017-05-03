@@ -1,4 +1,4 @@
-package com.samuel.notepad.text;
+package com.samuel.notepad.helper;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,12 +29,4 @@ public class TextHelper {
         stream.close();
     }
 
-    private static File getTextFileOfSameName(File file, File[] files) {
-        for(File f:files) {
-            if(f.getName().equals(file.getName())) {
-                return f;
-            }
-        }
-        return null;
-    }
 }

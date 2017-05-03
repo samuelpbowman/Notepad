@@ -2,7 +2,6 @@ package com.samuel.notepad;
 
 import android.app.DialogFragment;
 import android.content.Intent;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -14,8 +13,8 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
+import android.widget.Toast;
 
-//import com.google.android.gms.ads.AdView;
 import com.samuel.notepad.dialog.NameDialogFragment;
 import com.samuel.notepad.dialog.SaveDialogFragment;
 
@@ -30,7 +29,6 @@ public class MainActivity extends AppCompatActivity
     private TextView count;
     private Spinner spinner;
     private ArrayList<String> options;
-    //private AdView ad;
     private boolean savedSinceLastEdit;
     private boolean needsNameDialog;
     private boolean needsListActivity;
@@ -44,8 +42,8 @@ public class MainActivity extends AppCompatActivity
 
         this.text = (EditText) findViewById(R.id.editText);
         this.count = (TextView) findViewById(R.id.charCount);
-        //this.ad = (AdView) findViewById(R.id.ad);
 
+        //error-checked opening of text file and setting of character count
         if((((NotepadApplication)getApplication()).getFile().exists())) {
             String string = ((NotepadApplication)getApplication()).openFile();
             text.setText(string, BufferType.EDITABLE);
@@ -59,6 +57,8 @@ public class MainActivity extends AppCompatActivity
         this.needsListActivity = false;
         this.needsTextClear = false;
 
+        //listener for when the text changes, so that both the
+        //character counter and saved variable can be updated
         this.text.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
+        //listeners for the dropdown menu
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onNothingSelected(AdapterView view) {}
             public void onItemSelected(AdapterView view, View v, int i, long l) {
@@ -131,11 +132,10 @@ public class MainActivity extends AppCompatActivity
                         break;
                     case 4:
                         view.setSelection(0);
-                        Snackbar.make(findViewById(R.id.container), R.string.coming_soon, Snackbar.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, R.string.coming_soon_message, Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
     }
 
     @Override
@@ -168,6 +168,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(this, ListActivity.class));
         else if(needsTextClear)
             this.text.setText("");
+        this.needsTextClear = false;
     }
 
     @Override
@@ -179,9 +180,12 @@ public class MainActivity extends AppCompatActivity
         ((NotepadApplication)getApplication()).setFile(file);
         ((NotepadApplication)getApplication()).saveFile(this.text.getText().toString());
 
+        //change the dropdown to reflect the newly created filename
+        //changing the name of a file from inside the editor is
+        //not currently supported
         options.remove(0);
         options.add(0, ((NotepadApplication)getApplication()).getFile().getName().isEmpty() ?
-                "Untitled" : name.substring(0, name.length() - 4));
+                "Untitled" : name);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.simple_list_item, options);
         spinner.setAdapter(adapter);
 
@@ -189,6 +193,6 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(this, ListActivity.class));
         else if(needsTextClear)
             this.text.setText("");
+        this.needsTextClear = false;
     }
-
 }

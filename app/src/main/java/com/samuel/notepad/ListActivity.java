@@ -22,25 +22,20 @@ import java.util.ArrayList;
 public class ListActivity extends AppCompatActivity
         implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener,
         NameDialogFragment.NameDialogListener, DeleteDialogFragment.DeleteDialogListener {
+
     private ListView view;
     private File selected;
+    private boolean rename;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        rename = false;
 
         view = (ListView) findViewById(R.id.documents);
-        ArrayList<String> files = new ArrayList<>();
-        for(File f : ListActivity.this.getFilesDir().listFiles()) {
-            if(f.getName().contains("instant-run")) continue;
-            files.add(f.getName().substring(0, f.getName().length() - 4));
-        }
-
-        ArrayAdapter<String> adapt = new ArrayAdapter<>(
-                ListActivity.this, R.layout.simple_list_item, files.toArray(new String[files.toArray().length]));
-        view.setAdapter(adapt);
+        this.resetList();
         view.setOnItemClickListener(this);
         view.setOnItemLongClickListener(this);
 
@@ -73,11 +68,18 @@ public class ListActivity extends AppCompatActivity
 
     @Override
     public void onNamePositiveButtonClick(DialogFragment dialog) {
-        EditText t = (EditText)dialog.getDialog().findViewById(R.id.name_field);
+        EditText t = (EditText) dialog.getDialog().findViewById(R.id.name_field);
         String str = t.getText().toString();
-        if(str.equals("")) {
+        if (str.equals("")) {
             DialogFragment dialog2 = new NameDialogFragment();
             dialog2.show(getFragmentManager(), "NameDialogFragment2");
+        } else if(rename) {
+            if(selected.renameTo(new File(this.getFilesDir(), str + ".txt"))) {
+                this.resetList();
+            } else {
+                NameDialogFragment fragment = new NameDialogFragment();
+                fragment.show(getFragmentManager(), "NameDialogFragment2");
+            }
         } else {
             File file = new File(getApplicationContext().getFilesDir(), str + ".txt");
             ((NotepadApplication) getApplication()).setFile(file);
@@ -87,18 +89,9 @@ public class ListActivity extends AppCompatActivity
 
     @Override
     public void onDeleteDialogPositiveButtonClick(DialogFragment dialog) {
-        if(selected.delete())
+        if (selected.delete())
             Snackbar.make(view, "Deleted", Snackbar.LENGTH_SHORT).show();
-
-        ArrayList<String> files = new ArrayList<>();
-        for(File f : ListActivity.this.getFilesDir().listFiles()) {
-            if(f.getName().contains("instant-run")) continue;
-            files.add(f.getName().substring(0, f.getName().length() - 4));
-        }
-
-        ArrayAdapter<String> adapt = new ArrayAdapter<>(
-                ListActivity.this, R.layout.simple_list_item, files.toArray(new String[files.toArray().length]));
-        view.setAdapter(adapt);
+        this.resetList();
     }
 
     @Override
@@ -108,6 +101,22 @@ public class ListActivity extends AppCompatActivity
 
     @Override
     public void onDeleteDialogNeutralButtonClick(DialogFragment dialog) {
-        //TODO implement
+        rename = true;
+        NameDialogFragment fragment = new NameDialogFragment();
+        fragment.show(getFragmentManager(), "NameDialogFragment");
+    }
+
+
+    private void resetList() {
+        ArrayList<String> files = new ArrayList<>();
+        for(File f : ListActivity.this.getFilesDir().listFiles()) {
+            if(f.getName().contains("instant-run")) continue;
+            files.add(f.getName().substring(0, f.getName().length() - 4));
+        }
+
+        ArrayAdapter<String> adapt = new ArrayAdapter<>(
+                ListActivity.this, R.layout.simple_list_item, files.toArray(new String[files.toArray().length]));
+        view.setAdapter(adapt);
+        rename = false;
     }
 }
