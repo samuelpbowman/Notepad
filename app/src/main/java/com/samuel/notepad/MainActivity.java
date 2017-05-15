@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import android.widget.Toast;
 
+import com.samuel.notepad.dialog.ListDialogFragment;
 import com.samuel.notepad.dialog.NameDialogFragment;
 import com.samuel.notepad.dialog.SaveDialogFragment;
 
@@ -22,8 +23,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class MainActivity extends AppCompatActivity
-        implements SaveDialogFragment.SaveDialogListener, NameDialogFragment.NameDialogListener {
+public class MainActivity extends AppCompatActivity implements
+        SaveDialogFragment.SaveDialogListener, NameDialogFragment.NameDialogListener {
 
     private EditText text;
     private TextView count;
@@ -132,7 +133,8 @@ public class MainActivity extends AppCompatActivity
                         break;
                     case 4:
                         view.setSelection(0);
-                        Toast.makeText(MainActivity.this, R.string.coming_soon_message, Toast.LENGTH_SHORT).show();
+                        DialogFragment fragment = new ListDialogFragment();
+                        fragment.show(getFragmentManager(), "");
                 }
             }
         });
@@ -156,9 +158,7 @@ public class MainActivity extends AppCompatActivity
         savedSinceLastEdit = true;
         int counter = text.getText().toString().length();
         this.count.setText(String.valueOf(counter));
-        if(needsListActivity)
-            startActivity(new Intent(this, ListActivity.class));
-        else if(needsTextClear)
+        if(needsTextClear)
             this.text.setText("");
     }
 
