@@ -14,14 +14,14 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.samuel.notepad.dialog.DeleteDialogFragment;
-import com.samuel.notepad.dialog.NameDialogFragment;
+import com.samuel.notepad.dialog.InputDialogFragment;
 
 import java.io.File;
 import java.util.ArrayList;
 
 public class ListActivity extends AppCompatActivity
         implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener,
-        NameDialogFragment.NameDialogListener, DeleteDialogFragment.DeleteDialogListener {
+        InputDialogFragment.InputDialogListener, DeleteDialogFragment.DeleteDialogListener {
 
     private ListView view;
     private File selected;
@@ -44,8 +44,8 @@ public class ListActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 // Create an instance of the dialog fragment and show it
-                DialogFragment dialog = new NameDialogFragment();
-                dialog.show(getFragmentManager(), "NameDialogFragment");
+                DialogFragment dialog = new InputDialogFragment();
+                dialog.show(getFragmentManager(), "InputDialogFragment");
             }
         });
     }
@@ -67,17 +67,17 @@ public class ListActivity extends AppCompatActivity
     }
 
     @Override
-    public void onNamePositiveButtonClick(DialogFragment dialog) {
-        EditText t = (EditText) dialog.getDialog().findViewById(R.id.name_field);
+    public void onInputPositiveButtonClick(DialogFragment dialog) {
+        EditText t = (EditText) dialog.getDialog().findViewById(R.id.input_field);
         String str = t.getText().toString();
         if (str.equals("")) {
-            DialogFragment dialog2 = new NameDialogFragment();
+            DialogFragment dialog2 = new InputDialogFragment();
             dialog2.show(getFragmentManager(), "NameDialogFragment2");
         } else if(rename) {
             if(selected.renameTo(new File(this.getFilesDir(), str + ".txt"))) {
                 this.resetList();
             } else {
-                NameDialogFragment fragment = new NameDialogFragment();
+                InputDialogFragment fragment = new InputDialogFragment();
                 fragment.show(getFragmentManager(), "NameDialogFragment2");
             }
         } else {
@@ -102,8 +102,8 @@ public class ListActivity extends AppCompatActivity
     @Override
     public void onDeleteDialogNeutralButtonClick(DialogFragment dialog) {
         rename = true;
-        NameDialogFragment fragment = new NameDialogFragment();
-        fragment.show(getFragmentManager(), "NameDialogFragment");
+        InputDialogFragment fragment = new InputDialogFragment();
+        fragment.show(getFragmentManager(), "InputDialogFragment");
     }
 
 

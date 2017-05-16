@@ -7,6 +7,7 @@
         <item>Share&#8230;</item>
     </string-array>
     <string-array name="social_media">
+        <item>Text Message</item>
         <item>Facebook</item>
         <item>Twitter</item>
         <item>Tumblr</item>

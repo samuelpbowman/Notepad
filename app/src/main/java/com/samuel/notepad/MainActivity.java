@@ -13,10 +13,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
-import android.widget.Toast;
 
+import com.samuel.notepad.dialog.InputDialogFragment;
 import com.samuel.notepad.dialog.ListDialogFragment;
-import com.samuel.notepad.dialog.NameDialogFragment;
 import com.samuel.notepad.dialog.SaveDialogFragment;
 
 import java.io.File;
@@ -24,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity implements
-        SaveDialogFragment.SaveDialogListener, NameDialogFragment.NameDialogListener {
+        SaveDialogFragment.SaveDialogListener, InputDialogFragment.InputDialogListener {
 
     private EditText text;
     private TextView count;
@@ -135,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements
                         view.setSelection(0);
                         DialogFragment fragment = new ListDialogFragment();
                         fragment.show(getFragmentManager(), "");
+                        break;
                 }
             }
         });
@@ -143,12 +143,12 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onSaveDialogPositiveClick(DialogFragment dialog) {
         if(this.needsNameDialog) {
-            DialogFragment fragment = new NameDialogFragment();
+            DialogFragment fragment = InputDialogFragment.newInstance(false);
             String tag;
             if(dialog.getTag().equals("SaveDialogFragmentOpen")) {
-                tag = "NameDialogFragmentTransition";
+                tag = "InputDialogFragmentTransition";
             } else {
-                tag = "NameDialogFragment";
+                tag = "InputDialogFragment";
             }
             fragment.show(getFragmentManager(), tag);
         } else {
@@ -172,8 +172,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onNamePositiveButtonClick(DialogFragment dialog) {
-        EditText edit = (EditText)dialog.getDialog().findViewById(R.id.name_field);
+    public void onInputPositiveButtonClick(DialogFragment dialog) {
+        EditText edit = (EditText)dialog.getDialog().findViewById(R.id.input_field);
         String name = edit.getText().toString();
 
         File file = new File(getApplicationContext().getFilesDir(), name + ".txt");
