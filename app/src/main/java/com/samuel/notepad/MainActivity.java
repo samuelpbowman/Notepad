@@ -15,7 +15,6 @@ import android.widget.TextView;
 import android.widget.TextView.BufferType;
 
 import com.samuel.notepad.dialog.InputDialogFragment;
-import com.samuel.notepad.dialog.ListDialogFragment;
 import com.samuel.notepad.dialog.SaveDialogFragment;
 
 import java.io.File;
@@ -27,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private EditText text;
     private TextView count;
+    //private TextView lineCount;
     private Spinner spinner;
     private ArrayList<String> options;
     private boolean savedSinceLastEdit;
@@ -40,6 +40,11 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        //ActionMenuView options_menu = (ActionMenuView) findViewById(R.id.options_menu);
+        //setSupportActionBar(myToolbar);
+
+        //this.lineCount = (TextView) findViewById(R.id.line_nums);
         this.text = (EditText) findViewById(R.id.editText);
         this.count = (TextView) findViewById(R.id.charCount);
 
@@ -50,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements
         }
         int counter = MainActivity.this.text.getText().toString().length();
         this.count.setText(String.valueOf(counter));
+        //int lineCount = this.text.getLineCount();
 
         String name = ((NotepadApplication)getApplication()).getFile().getName();
         this.savedSinceLastEdit = true;
@@ -130,11 +136,6 @@ public class MainActivity extends AppCompatActivity implements
                             fragment.show(getFragmentManager(), "SaveDialogFragment");
                         }
                         break;
-                    case 4:
-                        view.setSelection(0);
-                        DialogFragment fragment = new ListDialogFragment();
-                        fragment.show(getFragmentManager(), "");
-                        break;
                 }
             }
         });
@@ -143,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onSaveDialogPositiveClick(DialogFragment dialog) {
         if(this.needsNameDialog) {
-            DialogFragment fragment = InputDialogFragment.newInstance(false);
+            DialogFragment fragment = InputDialogFragment.newInstance(InputDialogFragment.NAME_DIALOG);
             String tag;
             if(dialog.getTag().equals("SaveDialogFragmentOpen")) {
                 tag = "InputDialogFragmentTransition";
@@ -173,26 +174,16 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onInputPositiveButtonClick(DialogFragment dialog) {
-        EditText edit = (EditText)dialog.getDialog().findViewById(R.id.input_field);
-        String name = edit.getText().toString();
+        EditText field = (EditText)dialog.getDialog().findViewById(R.id.input_field);
+        String text = field.getText().toString();
 
-        File file = new File(getApplicationContext().getFilesDir(), name + ".txt");
+        File file = new File(getFilesDir(), text + ".txt");
         ((NotepadApplication)getApplication()).setFile(file);
         ((NotepadApplication)getApplication()).saveFile(this.text.getText().toString());
 
-        //change the dropdown to reflect the newly created filename
-        //changing the name of a file from inside the editor is
-        //not currently supported
-        options.remove(0);
-        options.add(0, ((NotepadApplication)getApplication()).getFile().getName().isEmpty() ?
-                "Untitled" : name);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.simple_list_item, options);
-        spinner.setAdapter(adapter);
-
-        if(needsListActivity)
-            startActivity(new Intent(this, ListActivity.class));
-        else if(needsTextClear)
+        if(needsTextClear)
             this.text.setText("");
-        this.needsTextClear = false;
+        else if(needsListActivity)
+            startActivity(new Intent(this, ListActivity.class));
     }
 }

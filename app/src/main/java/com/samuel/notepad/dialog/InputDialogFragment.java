@@ -20,6 +20,8 @@ import com.samuel.notepad.R;
 
 public class InputDialogFragment extends DialogFragment {
 
+    public static final int NAME_DIALOG = 1;
+    //public static final int SMS_DIALOG = 2;
 
     public interface InputDialogListener {
         void onInputPositiveButtonClick(DialogFragment dialog);
@@ -27,11 +29,11 @@ public class InputDialogFragment extends DialogFragment {
 
     InputDialogListener idl;
 
-    public static InputDialogFragment newInstance(boolean arg) {
+    public static InputDialogFragment newInstance(int arg) {
         InputDialogFragment f = new InputDialogFragment();
 
         Bundle args = new Bundle();
-        args.putBoolean("list", arg);
+        args.putInt("type", arg);
         f.setArguments(args);
 
         return f;
@@ -42,17 +44,16 @@ public class InputDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(R.layout.dialog_input);
+        int res = R.string.dialog_name_message;
 
-        int res = (this.getArguments().getBoolean("list")) ?
-                R.string.dialog_recipient_message : R.string.dialog_name_message;
         builder.setMessage(res);
         builder.setPositiveButton(
-                R.string.dialog_okay_button, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        idl.onInputPositiveButtonClick(InputDialogFragment.this);
-                    }
-                });
+            R.string.dialog_okay_button, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    idl.onInputPositiveButtonClick(InputDialogFragment.this);
+                }
+            });
         return builder.create();
     }
 

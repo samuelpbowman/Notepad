@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.samuel.notepad.dialog.DeleteDialogFragment;
 import com.samuel.notepad.dialog.InputDialogFragment;
@@ -30,8 +31,9 @@ public class ListActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitleTextColor(0x1588FD);
+        setSupportActionBar(toolbar);*/
         rename = false;
 
         view = (ListView) findViewById(R.id.documents);
@@ -89,8 +91,8 @@ public class ListActivity extends AppCompatActivity
 
     @Override
     public void onDeleteDialogPositiveButtonClick(DialogFragment dialog) {
-        if (selected.delete())
-            Snackbar.make(view, "Deleted", Snackbar.LENGTH_SHORT).show();
+        if(selected.delete())
+            Toast.makeText(this, "Deleted", Toast.LENGTH_SHORT).show();
         this.resetList();
     }
 
