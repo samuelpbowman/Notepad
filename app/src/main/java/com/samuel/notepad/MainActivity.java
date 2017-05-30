@@ -2,16 +2,21 @@ package com.samuel.notepad;
 
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.TextView.BufferType;
 
 import com.samuel.notepad.dialog.InputDialogFragment;
@@ -20,44 +25,44 @@ import com.samuel.notepad.dialog.SaveDialogFragment;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements
         SaveDialogFragment.SaveDialogListener, InputDialogFragment.InputDialogListener {
 
     private EditText text;
-    private TextView count;
-    //private TextView lineCount;
-    private Spinner spinner;
-    private ArrayList<String> options;
     private boolean savedSinceLastEdit;
     private boolean needsNameDialog;
     private boolean needsListActivity;
     private boolean needsTextClear;
 
     @Override
-    protected void onCreate(final Bundle savedInstanceState) {
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+        return true;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        //ActionMenuView options_menu = (ActionMenuView) findViewById(R.id.options_menu);
-        //setSupportActionBar(myToolbar);
-
-        //this.lineCount = (TextView) findViewById(R.id.line_nums);
         this.text = (EditText) findViewById(R.id.editText);
-        this.count = (TextView) findViewById(R.id.charCount);
+        String name = ((NotepadApplication)getApplication()).getFile().getName();
 
         //error-checked opening of text file and setting of character count
         if((((NotepadApplication)getApplication()).getFile().exists())) {
             String string = ((NotepadApplication)getApplication()).openFile();
             text.setText(string, BufferType.EDITABLE);
         }
-        int counter = MainActivity.this.text.getText().toString().length();
-        this.count.setText(String.valueOf(counter));
-        //int lineCount = this.text.getLineCount();
 
-        String name = ((NotepadApplication)getApplication()).getFile().getName();
+        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        //toolbar.setTitleTextColor(getResources().getColor());
+        setSupportActionBar(toolbar);
+        //getSupportActionBar().setIcon(R.drawable.notepad_launcher_rounded_web);
+        getSupportActionBar().setTitle(name.isEmpty() ? "Untitled":name);
+
         this.savedSinceLastEdit = true;
         this.needsNameDialog = false;
         this.needsListActivity = false;
@@ -72,72 +77,10 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 savedSinceLastEdit = false;
-                int counter = MainActivity.this.text.getText().toString().length();
-                MainActivity.this.count.setText(String.valueOf(counter));
             }
 
             @Override
             public void afterTextChanged(Editable editable) {}
-        });
-
-        spinner = (Spinner) findViewById(R.id.options);
-        options = new ArrayList<>();
-        options.add((((NotepadApplication)getApplication()).getFile().getName().isEmpty() ?
-                "Untitled" : name.substring(0, name.length() - 4)));
-        options.addAll(Arrays.asList(getResources().getStringArray(R.array.options_array)));
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.simple_list_item, options);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-
-        //listeners for the dropdown menu
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onNothingSelected(AdapterView view) {}
-            public void onItemSelected(AdapterView view, View v, int i, long l) {
-                switch(i) {
-                    case 1:
-                        view.setSelection(0);
-                        MainActivity.this.needsTextClear = true;
-                        if(!((NotepadApplication)getApplication()).getFile().exists())
-                            MainActivity.this.needsNameDialog = true;
-                        if(savedSinceLastEdit) {
-                            options.remove(0);
-                            options.add(0, "Untitled");
-                            ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                                    MainActivity.this, R.layout.simple_list_item, options);
-                            spinner.setAdapter(adapter);
-                        } else {
-                            SaveDialogFragment fragment = new SaveDialogFragment();
-                            fragment.show(getFragmentManager(), "SaveDialogFragment");
-                        }
-                        if(!MainActivity.this.needsNameDialog) {
-                            MainActivity.this.text.setText("");
-                            ((NotepadApplication)getApplication()).setFile(new File(""));
-                        }
-                        break;
-                    case 2:
-                        view.setSelection(0);
-                        MainActivity.this.needsListActivity = true;
-                        if(!((NotepadApplication)getApplication()).getFile().exists())
-                            MainActivity.this.needsNameDialog = true;
-                        if(savedSinceLastEdit) {
-                            startActivity(new Intent(MainActivity.this, ListActivity.class));
-                        } else {
-                            SaveDialogFragment fragment = new SaveDialogFragment();
-                            fragment.show(getFragmentManager(), "SaveDialogFragment");
-                        }
-                        break;
-                    case 3:
-                        view.setSelection(0);
-                        if(!((NotepadApplication)getApplication()).getFile().exists())
-                            MainActivity.this.needsNameDialog = true;
-                        if(!savedSinceLastEdit) {
-                            SaveDialogFragment fragment = new SaveDialogFragment();
-                            fragment.show(getFragmentManager(), "SaveDialogFragment");
-                        }
-                        break;
-                }
-            }
         });
     }
 
@@ -157,8 +100,6 @@ public class MainActivity extends AppCompatActivity implements
             ((NotepadApplication) getApplication()).saveFile(string);
         }
         savedSinceLastEdit = true;
-        int counter = text.getText().toString().length();
-        this.count.setText(String.valueOf(counter));
         if(needsTextClear)
             this.text.setText("");
     }

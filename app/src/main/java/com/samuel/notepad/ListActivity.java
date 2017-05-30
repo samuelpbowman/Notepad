@@ -4,9 +4,7 @@ import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -31,9 +29,7 @@ public class ListActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
-        /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitleTextColor(0x1588FD);
-        setSupportActionBar(toolbar);*/
+
         rename = false;
 
         view = (ListView) findViewById(R.id.documents);
@@ -108,7 +104,9 @@ public class ListActivity extends AppCompatActivity
         fragment.show(getFragmentManager(), "InputDialogFragment");
     }
 
-
+    /**
+     * Algorithm for populating the list of files.
+     */
     private void resetList() {
         ArrayList<String> files = new ArrayList<>();
         for(File f : ListActivity.this.getFilesDir().listFiles()) {

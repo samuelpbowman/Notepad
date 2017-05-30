@@ -8,7 +8,7 @@
     <string name="dialog_name_message">Enter a name for your file:</string>
     <string name="dialog_rename_button">Rename</string>
     <string name="dialog_delete_message">Are you sure you want to delete?</string>
-    <string name="coming_soon_message">Coming Soon!!</string>
-    <string name="share_message">Share to Social Media</string>
-    <string name="dialog_recipient_message">Enter the numbers to send to, separated by commas</string>
+    <string name="menu_new">New</string>
+    <string name="menu_open">Open</string>
+    <string name="menu_save">Save</string>
 </resources>
