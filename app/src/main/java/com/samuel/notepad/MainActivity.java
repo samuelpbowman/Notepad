@@ -2,30 +2,21 @@ package com.samuel.notepad;
 
 import android.app.DialogFragment;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView.BufferType;
+import android.widget.Toast;
 
 import com.samuel.notepad.dialog.InputDialogFragment;
 import com.samuel.notepad.dialog.SaveDialogFragment;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements
         SaveDialogFragment.SaveDialogListener, InputDialogFragment.InputDialogListener {
@@ -39,6 +30,47 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+        menu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                //Toast.makeText(MainActivity.this, "Coming soon!", Toast.LENGTH_SHORT).show();
+                needsTextClear = true;
+                if(!((NotepadApplication)getApplication()).getFile().exists())
+                    needsNameDialog = true;
+                if(!savedSinceLastEdit) {
+                    DialogFragment fragment = new SaveDialogFragment();
+                    fragment.show(getFragmentManager(), "SaveDialogFragment");
+                }
+                return true;
+            }
+        });
+        menu.getItem(1).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                needsListActivity = true;
+                if(!((NotepadApplication)getApplication()).getFile().exists())
+                    needsNameDialog = true;
+                if(savedSinceLastEdit) {
+                    startActivity(new Intent(MainActivity.this, ListActivity.class));
+                } else {
+                    DialogFragment fragment = new SaveDialogFragment();
+                    fragment.show(getFragmentManager(), "SaveDialogFragment");
+                }
+                //Toast.makeText(MainActivity.this, "Coming soon!", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
+        menu.getItem(2).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                //Toast.makeText(MainActivity.this, "Coming soon!", Toast.LENGTH_SHORT).show();
+                if(!savedSinceLastEdit) {
+                    DialogFragment fragment = new SaveDialogFragment();
+                    fragment.show(getFragmentManager(), "SaveDialogFragment");
+                }
+                return true;
+            }
+        });
         return true;
     }
 
@@ -58,10 +90,9 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
-        //toolbar.setTitleTextColor(getResources().getColor());
+        toolbar.setTitle(name.isEmpty() ? "Untitled" : name.substring(0, name.length()-4));
         setSupportActionBar(toolbar);
-        //getSupportActionBar().setIcon(R.drawable.notepad_launcher_rounded_web);
-        getSupportActionBar().setTitle(name.isEmpty() ? "Untitled":name);
+        //getSupportActionBar().setTitle();
 
         this.savedSinceLastEdit = true;
         this.needsNameDialog = false;

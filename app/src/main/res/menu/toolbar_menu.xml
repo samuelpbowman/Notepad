@@ -6,13 +6,13 @@
     android:id="@+id/main_toolbar_menu">
 
     <item android:title="@string/menu_new"
-        android:icon="@drawable/icon_6_128"
+        android:icon="@drawable/ic_new"
         app:showAsAction="ifRoom"/>
     <item android:title="@string/menu_open"
-        android:icon="@drawable/document_open"
+        android:icon="@drawable/ic_open"
         app:showAsAction="ifRoom"/>
     <item android:title="@string/menu_save"
-        android:icon="@drawable/save_icon"
+        android:icon="@drawable/ic_save"
         app:showAsAction="ifRoom"/>
 
 </menu>
