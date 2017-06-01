@@ -20,14 +20,13 @@ import com.samuel.notepad.R;
 
 public class InputDialogFragment extends DialogFragment {
 
-    public static final int NAME_DIALOG = 1;
-    //public static final int SMS_DIALOG = 2;
+    public static final String TEXT_EXT = ".txt";
 
     public interface InputDialogListener {
         void onInputPositiveButtonClick(DialogFragment dialog);
     }
 
-    InputDialogListener idl;
+    protected InputDialogListener idl;
 
     public static InputDialogFragment newInstance(int arg) {
         InputDialogFragment f = new InputDialogFragment();
