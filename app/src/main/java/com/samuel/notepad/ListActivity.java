@@ -53,14 +53,14 @@ public class ListActivity extends AppCompatActivity
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
         Intent intent = new Intent(this, EditorActivity.class);
-        File f = new File(getFilesDir().getAbsolutePath() + "/" + adapterView.getItemAtPosition(position) + ".txt");
+        File f = new File(getFilesDir().getAbsolutePath() + "/" + adapterView.getItemAtPosition(position) + InputDialogFragment.TEXT_EXT);
         ((NotepadApplication)getApplication()).setFile(f);
         startActivity(intent);
     }
 
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
-        File file = new File(getApplicationContext().getFilesDir(), "/" + adapterView.getItemAtPosition(position) + ".txt");
+        File file = new File(getApplicationContext().getFilesDir(), "/" + adapterView.getItemAtPosition(position) + InputDialogFragment.TEXT_EXT);
         ((NotepadApplication)getApplication()).setFile(file);
         DialogFragment fragment = new DeleteDialogFragment();
         fragment.show(getFragmentManager(), "DeleteDialogFragment");
