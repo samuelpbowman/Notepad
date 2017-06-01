@@ -24,8 +24,7 @@ public class ListActivity extends AppCompatActivity
         InputDialogFragment.InputDialogListener, DeleteDialogFragment.DeleteDialogListener {
 
     private ListView view;
-    private File selected;
-    private boolean rename;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,8 +33,6 @@ public class ListActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.list_toolbar);
         toolbar.setTitle("My Files");
         setSupportActionBar(toolbar);
-
-        rename = false;
 
         view = (ListView) findViewById(R.id.documents);
         this.resetList();
@@ -47,15 +44,15 @@ public class ListActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 // Create an instance of the dialog fragment and show it
-                DialogFragment dialog = new InputDialogFragment();
-                dialog.show(getFragmentManager(), "InputDialogFragment");
+                ((NotepadApplication)getApplication()).setFile(null);
+                ListActivity.startActivity(new Intent(ListActivity.this, EditorActivity.class));
             }
         });
     }
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, EditorActivity.class);
         File f = new File(getFilesDir().getAbsolutePath() + "/" + adapterView.getItemAtPosition(position) + ".txt");
         ((NotepadApplication)getApplication()).setFile(f);
         startActivity(intent);
@@ -63,7 +60,8 @@ public class ListActivity extends AppCompatActivity
 
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
-        selected = new File(getApplicationContext().getFilesDir(), "/" + adapterView.getItemAtPosition(position) + ".txt");
+        File file = new File(getApplicationContext().getFilesDir(), "/" + adapterView.getItemAtPosition(position) + ".txt");
+        ((NotepadApplication)getApplication()).setFile(file);
         DialogFragment fragment = new DeleteDialogFragment();
         fragment.show(getFragmentManager(), "DeleteDialogFragment");
         return true;
@@ -73,26 +71,12 @@ public class ListActivity extends AppCompatActivity
     public void onInputPositiveButtonClick(DialogFragment dialog) {
         EditText t = (EditText) dialog.getDialog().findViewById(R.id.input_field);
         String str = t.getText().toString();
-        if (str.equals("")) {
-            DialogFragment dialog2 = new InputDialogFragment();
-            dialog2.show(getFragmentManager(), "NameDialogFragment2");
-        } else if(rename) {
-            if(selected.renameTo(new File(this.getFilesDir(), str + ".txt"))) {
-                this.resetList();
-            } else {
-                InputDialogFragment fragment = new InputDialogFragment();
-                fragment.show(getFragmentManager(), "NameDialogFragment2");
-            }
-        } else {
-            File file = new File(getApplicationContext().getFilesDir(), str + ".txt");
-            ((NotepadApplication) getApplication()).setFile(file);
-            startActivity(new Intent(this, MainActivity.class));
-        }
+        ((NotepadApplication)getApplication()).getFile().setName(str.trim() + InputDialogFragment.TEXT_EXT);
     }
 
     @Override
     public void onDeleteDialogPositiveButtonClick(DialogFragment dialog) {
-        if(selected.delete())
+        if(((NotepadApplication)getApplication()).getFile().delete())
             Toast.makeText(this, "Deleted", Toast.LENGTH_SHORT).show();
         this.resetList();
     }
@@ -104,7 +88,6 @@ public class ListActivity extends AppCompatActivity
 
     @Override
     public void onDeleteDialogNeutralButtonClick(DialogFragment dialog) {
-        rename = true;
         InputDialogFragment fragment = new InputDialogFragment();
         fragment.show(getFragmentManager(), "InputDialogFragment");
     }
@@ -120,7 +103,7 @@ public class ListActivity extends AppCompatActivity
         }
 
         ArrayAdapter<String> adapt = new ArrayAdapter<>(
-                ListActivity.this, R.layout.simple_list_item, files.toArray(new String[files.toArray().length]));
+                this, R.layout.simple_list_item, files.toArray(new String[files.toArray().length]));
         view.setAdapter(adapt);
         rename = false;
     }
