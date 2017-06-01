@@ -31,27 +31,20 @@ public class EditorActivity extends AppCompatActivity implements InputDialogFrag
         this.text = (EditText) findViewById(R.id.editText);
         String name = ((NotepadApplication)getApplication()).getFile().getName();
 
-        //error-checked opening of text file and setting of character count
-        //if((((NotepadApplication)getApplication()).getFile().exists())) {
         String string = ((NotepadApplication)getApplication()).openFile();
         text.setText(string, BufferType.EDITABLE);
-        //}
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         toolbar.setTitle(name.isEmpty() ? "Untitled" : name.substring(0, name.length()-4));
         toolbar.setDisplayHomeAsUpEnabled(true);
         setSupportActionBar(toolbar);
 
-        //listener for when the text changes, so that both the
-        //character counter and saved variable can be updated
         this.text.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                //TODO implement
-            }
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
             @Override
             public void afterTextChanged(Editable editable) {}
@@ -71,13 +64,8 @@ public class EditorActivity extends AppCompatActivity implements InputDialogFrag
 
     @Override
     public void onInputPositiveButtonClick(DialogFragment dialog) {
-        EditText field = (EditText)dialog.getDialog().findViewById(R.id.input_field);
-        String text = field.getText().toString();
-
-        File file = new File(getFilesDir(), text + ".txt");
-        ((NotepadApplication)getApplication()).setFile(file);
-        ((NotepadApplication)getApplication()).saveFile(this.text.getText().toString());
-
-        
+        //EditText field = (EditText)dialog.getDialog().findViewById(R.id.input_field);
+        //String text = field.getText().toString();
+        startActivity(new Intent(this, ListActivity.class));     
     }
 }
