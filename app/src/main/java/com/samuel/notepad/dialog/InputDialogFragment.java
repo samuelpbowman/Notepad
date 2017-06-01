@@ -27,7 +27,7 @@ public class InputDialogFragment extends DialogFragment {
     }
 
     protected InputDialogListener idl;
-
+/*
     public static InputDialogFragment newInstance(int arg) {
         InputDialogFragment f = new InputDialogFragment();
 
@@ -36,7 +36,7 @@ public class InputDialogFragment extends DialogFragment {
         f.setArguments(args);
 
         return f;
-    }
+    }*/
 
     @Override
     @TargetApi(21)

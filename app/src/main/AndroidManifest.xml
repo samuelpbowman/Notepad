@@ -12,12 +12,13 @@
         android:theme="@style/AppTheme.NoActionBar"
         android:name="com.samuel.notepad.NotepadApplication">
         <activity
-            android:label=""
+            android:label="Notepad"
             android:name="com.samuel.notepad.EditorActivity" />
+
         <activity
             android:name=".ListActivity"
             android:label="@string/title_activity_list">
-             <intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />

@@ -22,7 +22,6 @@ public class DeleteDialogFragment extends DialogFragment {
 
     public interface DeleteDialogListener {
         void onDeleteDialogPositiveButtonClick(DialogFragment dialog);
-        void onDeleteDialogNegativeButtonClick(DialogFragment dialog);
         void onDeleteDialogNeutralButtonClick(DialogFragment dialog);
     }
 
@@ -37,13 +36,6 @@ public class DeleteDialogFragment extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialog.onDeleteDialogPositiveButtonClick(DeleteDialogFragment.this);
-            }
-        });
-        builder.setNegativeButton(R.string.dialog_no_button, new DialogInterface.OnClickListener()
-        {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialog.onDeleteDialogNegativeButtonClick(DeleteDialogFragment.this);
             }
         });
         builder.setNeutralButton(R.string.dialog_rename_button, new DialogInterface.OnClickListener() {

@@ -24,11 +24,14 @@ public class ListActivity extends AppCompatActivity
         InputDialogFragment.InputDialogListener, DeleteDialogFragment.DeleteDialogListener {
 
     private ListView view;
+    private NotepadApplication application;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+
+        this.application = ((NotepadApplication)getApplication());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.list_toolbar);
         toolbar.setTitle("My Files");
@@ -44,8 +47,8 @@ public class ListActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 // Create an instance of the dialog fragment and show it
-                ((NotepadApplication)getApplication()).setFile(null);
-                ListActivity.startActivity(new Intent(ListActivity.this, EditorActivity.class));
+                ListActivity.this.application.setFile(null);
+                startActivity(new Intent(ListActivity.this, EditorActivity.class));
             }
         });
     }
@@ -54,14 +57,14 @@ public class ListActivity extends AppCompatActivity
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
         Intent intent = new Intent(this, EditorActivity.class);
         File f = new File(getFilesDir().getAbsolutePath() + "/" + adapterView.getItemAtPosition(position) + InputDialogFragment.TEXT_EXT);
-        ((NotepadApplication)getApplication()).setFile(f);
+        this.application.setFile(f);
         startActivity(intent);
     }
 
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
         File file = new File(getApplicationContext().getFilesDir(), "/" + adapterView.getItemAtPosition(position) + InputDialogFragment.TEXT_EXT);
-        ((NotepadApplication)getApplication()).setFile(file);
+        this.application.setFile(file);
         DialogFragment fragment = new DeleteDialogFragment();
         fragment.show(getFragmentManager(), "DeleteDialogFragment");
         return true;
@@ -71,19 +74,14 @@ public class ListActivity extends AppCompatActivity
     public void onInputPositiveButtonClick(DialogFragment dialog) {
         EditText t = (EditText) dialog.getDialog().findViewById(R.id.input_field);
         String str = t.getText().toString();
-        ((NotepadApplication)getApplication()).getFile().setName(str.trim() + InputDialogFragment.TEXT_EXT);
+        this.application.getFile().renameTo(new File(str.trim() + InputDialogFragment.TEXT_EXT));
     }
 
     @Override
     public void onDeleteDialogPositiveButtonClick(DialogFragment dialog) {
-        if(((NotepadApplication)getApplication()).getFile().delete())
+        if(this.application.getFile().delete())
             Toast.makeText(this, "Deleted", Toast.LENGTH_SHORT).show();
         this.resetList();
-    }
-
-    @Override
-    public void onDeleteDialogNegativeButtonClick(DialogFragment dialog) {
-        //do nothing
     }
 
     @Override
@@ -105,6 +103,5 @@ public class ListActivity extends AppCompatActivity
         ArrayAdapter<String> adapt = new ArrayAdapter<>(
                 this, R.layout.simple_list_item, files.toArray(new String[files.toArray().length]));
         view.setAdapter(adapt);
-        rename = false;
     }
 }
