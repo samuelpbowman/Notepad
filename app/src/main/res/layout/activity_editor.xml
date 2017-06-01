@@ -6,9 +6,8 @@
     xmlns:com.google.android.gms="http://schemas.android.com/apk/res-auto"
     android:id="@+id/container"
     android:orientation="vertical"
-    tools:context="com.samuel.notepad.MainActivity">
+    tools:context="com.samuel.notepad.EditorActivity">
 
-    <!--Going to re-insert toolbar-->
     <include layout="@layout/toolbar" android:id="@+id/main_toolbar"/>
 
     <EditText
