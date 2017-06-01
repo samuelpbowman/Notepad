@@ -26,7 +26,7 @@ public class EditorActivity extends AppCompatActivity implements InputDialogFrag
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_editor);
 
         this.text = (EditText) findViewById(R.id.editText);
         String name = ((NotepadApplication)getApplication()).getFile().getName();
