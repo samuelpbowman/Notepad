@@ -50,7 +50,7 @@ public class EditorActivity extends AppCompatActivity implements InputDialogFrag
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                savedSinceLastEdit = false;
+                //TODO implement
             }
 
             @Override
