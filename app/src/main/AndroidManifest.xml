@@ -13,16 +13,16 @@
         android:name="com.samuel.notepad.NotepadApplication">
         <activity
             android:label=""
-            android:name="com.samuel.notepad.MainActivity">
-            <intent-filter>
+            android:name="com.samuel.notepad.EditorActivity" />
+        <activity
+            android:name=".ListActivity"
+            android:label="@string/title_activity_list">
+             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".ListActivity"
-            android:label="@string/title_activity_list" /><!-- ATTENTION: This was auto-generated to add Google Play
+        </activity><!-- ATTENTION: This was auto-generated to add Google Play
              services to your project for App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
         <meta-data
             android:name="com.google.android.gms.version"
